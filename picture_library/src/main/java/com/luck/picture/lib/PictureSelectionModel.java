@@ -61,6 +61,15 @@ public class PictureSelectionModel {
     }
 
     /**
+     * @param isShowOriginal Whether to show original image
+     * @return
+     */
+    public PictureSelectionModel isShowOriginal(boolean isShowOriginal) {
+        selectionConfig.isShowOriginal = isShowOriginal;
+        return this;
+    }
+
+    /**
      * @param enableCrop Do you want to start cutting ?
      * @return
      */

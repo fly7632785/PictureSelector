@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.luck.picture.lib.PictureSelector;
 import com.luck.picture.lib.config.PictureConfig;
 import com.luck.picture.lib.config.PictureMimeType;
+import com.luck.picture.lib.config.PictureSelectionConfig;
 import com.luck.picture.lib.entity.LocalMedia;
 import com.luck.pictureselector.adapter.GridImageAdapter;
 
@@ -49,7 +50,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener,
     private CheckBox cb_voice, cb_choose_mode, cb_isCamera, cb_isGif,
             cb_preview_img, cb_preview_video, cb_crop, cb_compress,
             cb_mode, cb_hide, cb_crop_circular, cb_styleCrop, cb_showCropGrid,
-            cb_showCropFrame, cb_preview_audio;
+            cb_showCropFrame, cb_preview_audio, cb_original_image;
     private int themeId;
     private int chooseMode = PictureMimeType.ofAll();
 
@@ -61,6 +62,12 @@ public class PhotoFragment extends Fragment implements View.OnClickListener,
         }
         init();
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        cb_compress.setChecked(PictureSelectionConfig.getInstance().isCompress);
     }
 
     private void init() {
@@ -86,6 +93,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener,
         cb_preview_audio = (CheckBox) rootView.findViewById(R.id.cb_preview_audio);
         cb_hide = (CheckBox) rootView.findViewById(R.id.cb_hide);
         cb_crop_circular = (CheckBox) rootView.findViewById(R.id.cb_crop_circular);
+        cb_original_image = (CheckBox) rootView.findViewById(R.id.cb_original_image);
         rgb_crop.setOnCheckedChangeListener(this);
         rgb_style.setOnCheckedChangeListener(this);
         rgb_photo_mode.setOnCheckedChangeListener(this);
@@ -97,6 +105,8 @@ public class PhotoFragment extends Fragment implements View.OnClickListener,
         cb_crop.setOnCheckedChangeListener(this);
         cb_crop_circular.setOnCheckedChangeListener(this);
         cb_compress.setOnCheckedChangeListener(this);
+        cb_original_image.setOnCheckedChangeListener(this);
+
         FullyGridLayoutManager manager = new FullyGridLayoutManager(getActivity(), 4, GridLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(manager);
         adapter = new GridImageAdapter(getActivity(), onAddPicClickListener);
@@ -156,6 +166,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener,
                         .showCropGrid(cb_showCropGrid.isChecked())
                         .openClickSound(cb_voice.isChecked())
                         .selectionMedia(selectList)
+                        .isShowOriginal(cb_original_image.isChecked()) //是否展示原图按钮
                         .forResult(PictureConfig.CHOOSE_REQUEST);
             } else {
                 // 单独拍照
@@ -181,6 +192,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener,
                         .showCropGrid(cb_showCropGrid.isChecked())
                         .openClickSound(cb_voice.isChecked())
                         .selectionMedia(selectList)
+                        .isShowOriginal(cb_original_image.isChecked()) //是否展示原图按钮
                         .forResult(PictureConfig.CHOOSE_REQUEST);
             }
         }
@@ -233,6 +245,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener,
                 cb_isGif.setVisibility(View.GONE);
                 cb_preview_video.setChecked(true);
                 cb_preview_img.setChecked(true);
+                cb_original_image.setVisibility(View.VISIBLE);
                 cb_preview_video.setVisibility(View.VISIBLE);
                 cb_preview_img.setVisibility(View.VISIBLE);
                 cb_preview_audio.setVisibility(View.GONE);
@@ -247,6 +260,7 @@ public class PhotoFragment extends Fragment implements View.OnClickListener,
                 cb_preview_video.setVisibility(View.GONE);
                 cb_preview_img.setChecked(true);
                 cb_preview_img.setVisibility(View.VISIBLE);
+                cb_original_image.setVisibility(View.VISIBLE);
                 cb_preview_audio.setVisibility(View.GONE);
                 break;
             case R.id.rb_video:

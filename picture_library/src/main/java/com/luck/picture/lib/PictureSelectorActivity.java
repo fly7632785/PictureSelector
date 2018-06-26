@@ -74,9 +74,9 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     private ImageView picture_left_back;
     private TextView picture_title, picture_right, picture_tv_ok, tv_empty,
             picture_tv_img_num, picture_id_preview, tv_PlayPause, tv_Stop, tv_Quit,
-            tv_musicStatus, tv_musicTotal, tv_musicTime;
+            tv_musicStatus, tv_musicTotal, tv_musicTime, tv_check;
     private RelativeLayout rl_picture_title;
-    private LinearLayout id_ll_ok;
+    private LinearLayout id_ll_ok, ll_check;
     private RecyclerView picture_recycler;
     private PictureImageGridAdapter adapter;
     private List<LocalMedia> images = new ArrayList<>();
@@ -89,6 +89,7 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     private LocalMediaLoader mediaLoader;
     private MediaPlayer mediaPlayer;
     private SeekBar musicSeekBar;
+    private boolean showOriginal;
     private boolean isPlayAudio = false;
     private CustomDialog audioDialog;
     private int audioH;
@@ -200,6 +201,16 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         picture_recycler = (RecyclerView) findViewById(R.id.picture_recycler);
         id_ll_ok = (LinearLayout) findViewById(R.id.id_ll_ok);
         tv_empty = (TextView) findViewById(R.id.tv_empty);
+        ll_check = (LinearLayout) findViewById(R.id.ll_check);
+        tv_check = (TextView) findViewById(R.id.tv_check);
+        showOriginal = config.isShowOriginal && config.selectionMode == PictureConfig.SINGLE;
+        if (config.isShowOriginal) {
+            ll_check.setVisibility(View.VISIBLE);
+            ll_check.setOnClickListener(this);
+            ll_check.setSelected(!config.isCompress);
+        } else {
+            ll_check.setVisibility(View.GONE);
+        }
         isNumComplete(numComplete);
         if (config.mimeType == PictureMimeType.ofAll()) {
             popupWindow = new PhotoPopupWindow(this);
@@ -213,6 +224,10 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
         } else {
             picture_id_preview.setVisibility(config.mimeType == PictureConfig.TYPE_VIDEO
                     ? View.GONE : View.VISIBLE);
+        }
+        if (showOriginal) {
+            picture_id_preview.setVisibility(View.GONE);
+            id_ll_ok.setVisibility(View.GONE);
         }
         picture_left_back.setOnClickListener(this);
         picture_right.setOnClickListener(this);
@@ -449,6 +464,22 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
     }
 
 
+    /**
+     * @param isChecked
+     * @param isAnim
+     */
+    public void selectImage(boolean isChecked, boolean isAnim) {
+        tv_check.setSelected(isChecked);
+        if (isChecked) {
+            if (isAnim) {
+                if (animation != null) {
+                    tv_check.startAnimation(animation);
+                }
+            }
+        }
+        config.isCompress = !tv_check.isSelected();
+    }
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -469,6 +500,10 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
                     folderWindow.notifyDataCheckedStatus(selectedImages);
                 }
             }
+        }
+        if (id == R.id.ll_check) {
+            boolean isChecked = tv_check.isSelected();
+            selectImage(!isChecked, true);
         }
 
         if (id == R.id.picture_id_preview) {
@@ -843,6 +878,9 @@ public class PictureSelectorActivity extends PictureBaseActivity implements View
             boolean isVideo = PictureMimeType.isVideo(pictureType);
             boolean eqVideo = config.mimeType == PictureConfig.TYPE_VIDEO;
             picture_id_preview.setVisibility(isVideo || eqVideo ? View.GONE : View.VISIBLE);
+        }
+        if (showOriginal) {
+            picture_id_preview.setVisibility(View.GONE);
         }
         boolean enable = selectImages.size() != 0;
         if (enable) {

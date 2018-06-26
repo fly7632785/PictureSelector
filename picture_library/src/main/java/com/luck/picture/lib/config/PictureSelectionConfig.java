@@ -64,7 +64,7 @@ public final class PictureSelectionConfig implements Parcelable {
     public boolean previewEggs;
     public boolean synOrAsy;
     public boolean isDragFrame;
-
+    public boolean isShowOriginal;
     public List<LocalMedia> selectionMedias;
 
     private void reset() {
@@ -111,6 +111,7 @@ public final class PictureSelectionConfig implements Parcelable {
         compressSavePath = "";
         suffixType = PictureFileUtils.POSTFIX;
         sizeMultiplier = 0.5f;
+        isShowOriginal = false;
         selectionMedias = new ArrayList<>();
     }
 
@@ -158,6 +159,7 @@ public final class PictureSelectionConfig implements Parcelable {
         dest.writeFloat(this.sizeMultiplier);
         dest.writeInt(this.cropWidth);
         dest.writeInt(this.cropHeight);
+        dest.writeByte(this.isShowOriginal ? (byte) 1 : (byte) 0);
         dest.writeByte(this.zoomAnim ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isCompress ? (byte) 1 : (byte) 0);
         dest.writeByte(this.isCamera ? (byte) 1 : (byte) 0);
@@ -228,6 +230,7 @@ public final class PictureSelectionConfig implements Parcelable {
         this.previewEggs = in.readByte() != 0;
         this.synOrAsy = in.readByte() != 0;
         this.isDragFrame = in.readByte() != 0;
+        this.isShowOriginal = in.readByte() != 0;
         this.selectionMedias = in.createTypedArrayList(LocalMedia.CREATOR);
     }
 
