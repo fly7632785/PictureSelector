@@ -4,7 +4,7 @@
 ### FORK
 此版本fork自 [PictureSelector 2.2.3](https://github.com/LuckSiege/PictureSelector)
 > 增加了是否显示原图的功能：如果是非原图则会压缩，并且返回结果里面compressPath有值，isCompressed为true
-![image](https://github.com/LuckSiege/PictureSelector/blob/master/image/original.jpg)
+![image](https://github.com/LuckSiege/PictureSelector/blob/master/image/original.png)
 
 
 使用方式：
